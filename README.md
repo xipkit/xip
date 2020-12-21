@@ -1,4 +1,4 @@
-# <a href='https://hellostealth.org'><img src='logo.svg' height='120' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
+# <a href='https://hellostealth.org'><img src='logo.svg' width='400' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
 
 Stealth is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
