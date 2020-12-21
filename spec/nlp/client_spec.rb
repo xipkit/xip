@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe "Stealth::Nlp::Client" do
+describe "Xip::Nlp::Client" do
 
   describe 'blank client' do
-    let(:nlp_client) { Stealth::Nlp::Client.new }
+    let(:nlp_client) { Xip::Nlp::Client.new }
 
     it 'should return nil for client' do
       expect(nlp_client.client).to be_nil

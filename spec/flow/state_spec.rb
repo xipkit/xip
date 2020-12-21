@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe Stealth::Flow::State do
+describe Xip::Flow::State do
 
   class SuperFlowMap
-    include Stealth::Flow
+    include Xip::Flow
 
     flow :new_todo do
       state :new
@@ -38,13 +38,13 @@ describe Stealth::Flow::State do
 
     it "should return the fail_state if a fails_to was specified" do
       flow_map.init(flow: :new_todo, state: :created)
-      expect(flow_map.current_state.fails_to).to be_a(Stealth::Session)
+      expect(flow_map.current_state.fails_to).to be_a(Xip::Session)
       expect(flow_map.current_state.fails_to.state_string).to eq 'new'
     end
 
     it "should return the fail_state if a fails_to was specified as a session" do
       flow_map.init(flow: :new_todo, state: :created2)
-      expect(flow_map.current_state.fails_to).to be_a(Stealth::Session)
+      expect(flow_map.current_state.fails_to).to be_a(Xip::Session)
       expect(flow_map.current_state.fails_to.state_string).to eq 'new'
       expect(flow_map.current_state.fails_to.flow_string).to eq 'new_todo'
     end
@@ -57,13 +57,13 @@ describe Stealth::Flow::State do
 
     it "should return the redirects_to state if a redirects_to was specified" do
       flow_map.init(flow: :new_todo, state: :deprecated)
-      expect(flow_map.current_state.redirects_to).to be_a(Stealth::Session)
+      expect(flow_map.current_state.redirects_to).to be_a(Xip::Session)
       expect(flow_map.current_state.redirects_to.state_string).to eq 'new'
     end
 
     it "should return the redirects_to state if a redirects_to was specified as a session" do
       flow_map.init(flow: :new_todo, state: :deprecated2)
-      expect(flow_map.current_state.redirects_to).to be_a(Stealth::Session)
+      expect(flow_map.current_state.redirects_to).to be_a(Xip::Session)
       expect(flow_map.current_state.redirects_to.state_string).to eq 'say_hi'
       expect(flow_map.current_state.redirects_to.flow_string).to eq 'other_flow'
     end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    stealth (2.0.0.beta2)
+    xip (2.0.0.beta2)
       activesupport (~> 6.0)
       multi_json (~> 1.12)
       puma (>= 4.2, < 5.0)
@@ -65,7 +65,7 @@ GEM
       tilt (~> 2.0)
     thor (1.0.1)
     tilt (2.0.10)
-    tzinfo (2.0.3)
+    tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     zeitwerk (2.4.2)
 
@@ -78,7 +78,7 @@ DEPENDENCIES
   rack-test (~> 1.1)
   rspec (~> 3.9)
   rspec_junit_formatter (~> 0.3)
-  stealth!
+  xip!
 
 BUNDLED WITH
    2.1.4

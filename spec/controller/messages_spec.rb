@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe Stealth::Controller::Messages do
+describe Xip::Controller::Messages do
 
-  class MrTronsController < Stealth::Controller
+  class MrTronsController < Xip::Controller
 
   end
 
@@ -30,7 +30,7 @@ describe Stealth::Controller::Messages do
 
   describe "homophone_translated_msg" do
     it 'should convert homophones to their respective alpha ordinal' do
-      Stealth::Controller::Messages::HOMOPHONES.each do |homophone, ordinal|
+      Xip::Controller::Messages::HOMOPHONES.each do |homophone, ordinal|
         test_controller.current_message.message = homophone
         test_controller.normalized_msg = test_controller.homophone_translated_msg = nil
         expect(test_controller.homophone_translated_msg).to eq(ordinal)
@@ -134,21 +134,21 @@ describe Stealth::Controller::Messages do
       test_controller.current_message.message = " B "
       expect {
         test_controller.get_match(['nice', 'woot', 'sea', 'bee'])
-      }.to raise_error(Stealth::Errors::ReservedHomophoneUsed, 'Cannot use `SEA, BEE`. Reserved for homophones.')
+      }.to raise_error(Xip::Errors::ReservedHomophoneUsed, 'Cannot use `SEA, BEE`. Reserved for homophones.')
     end
 
-    it "should raise Stealth::Errors::UnrecognizedMessage if a response was not matched" do
+    it "should raise Xip::Errors::UnrecognizedMessage if a response was not matched" do
       test_controller.current_message.message = "uh oh"
       expect {
         test_controller.get_match(['nice', 'woot'])
-      }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+      }.to raise_error(Xip::Errors::UnrecognizedMessage)
     end
 
-    it "should raise Stealth::Errors::UnrecognizedMessage if an SMS quick reply was not matched" do
+    it "should raise Xip::Errors::UnrecognizedMessage if an SMS quick reply was not matched" do
       test_controller.current_message.message = "C"
       expect {
         test_controller.get_match(['nice', 'woot'])
-      }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+      }.to raise_error(Xip::Errors::UnrecognizedMessage)
     end
 
     it "should not run NLP entity detection if an ordinal is entered by the user" do
@@ -188,37 +188,37 @@ describe Stealth::Controller::Messages do
           ).to eq(test_controller.nlp_result.entities[:number].first)
         end
 
-        it 'should raise Stealth::Errors::UnrecognizedMessage if more than one :number entity is returned and fuzzy_match=false' do
+        it 'should raise Xip::Errors::UnrecognizedMessage if more than one :number entity is returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(double_number_nlp_result)
           test_controller.nlp_result = double_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', :number], fuzzy_match: false)
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage, "Encountered 2 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
+          }.to raise_error(Xip::Errors::UnrecognizedMessage, "Encountered 2 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
         end
 
         it 'should log the NLP result if log_all_nlp_results=true' do
-          Stealth.config.log_all_nlp_results = true
-          Stealth.config.nlp_integration = :luis
+          Xip.config.log_all_nlp_results = true
+          Xip.config.nlp_integration = :luis
 
           luis_client = double('luis_client')
           allow(luis_client).to receive(:understand).and_return(single_number_nlp_result)
-          allow(Stealth::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
+          allow(Xip::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
 
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> Performing NLP."
           )
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: #{single_number_nlp_result.parsed_result.inspect}"
           )
           test_controller.current_message.message = "hi"
           test_controller.get_match(['nice', :number])
 
-          Stealth.config.log_all_nlp_results = false
-          Stealth.config.nlp_integration = nil
+          Xip.config.log_all_nlp_results = false
+          Xip.config.nlp_integration = nil
         end
       end
 
@@ -273,47 +273,47 @@ describe Stealth::Controller::Messages do
           ).to eq([89, 'scores'])
         end
 
-        it 'should raise Stealth::Errors::UnrecognizedMessage if more than one :number entity is returned and fuzzy_match=false' do
+        it 'should raise Xip::Errors::UnrecognizedMessage if more than one :number entity is returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(triple_number_nlp_result)
           test_controller.nlp_result = triple_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', :number], fuzzy_match: false)
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage, "Encountered 3 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
+          }.to raise_error(Xip::Errors::UnrecognizedMessage, "Encountered 3 entity matches of type :number and expected 1. To allow, set fuzzy_match to true.")
         end
 
-        it 'should raise Stealth::Errors::UnrecognizedMessage if more than two :number entities are returned and fuzzy_match=false' do
+        it 'should raise Xip::Errors::UnrecognizedMessage if more than two :number entities are returned and fuzzy_match=false' do
           allow(test_controller).to receive(:perform_nlp!).and_return(triple_number_nlp_result)
           test_controller.nlp_result = triple_number_nlp_result
 
           test_controller.current_message.message = "hi"
           expect {
             test_controller.get_match(['nice', [:number, :number]], fuzzy_match: false)
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage, "Encountered 1 additional entity matches of type :number for match [:number, :number]. To allow, set fuzzy_match to true.")
+          }.to raise_error(Xip::Errors::UnrecognizedMessage, "Encountered 1 additional entity matches of type :number for match [:number, :number]. To allow, set fuzzy_match to true.")
         end
 
         it 'should log the NLP result if log_all_nlp_results=true' do
-          Stealth.config.log_all_nlp_results = true
-          Stealth.config.nlp_integration = :luis
+          Xip.config.log_all_nlp_results = true
+          Xip.config.nlp_integration = :luis
 
           luis_client = double('luis_client')
           allow(luis_client).to receive(:understand).and_return(triple_number_nlp_result)
-          allow(Stealth::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
+          allow(Xip::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
 
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> Performing NLP."
           )
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: #{triple_number_nlp_result.parsed_result.inspect}"
           )
           test_controller.current_message.message = "hi"
           test_controller.get_match(['nice', [:number, :number]])
 
-          Stealth.config.log_all_nlp_results = false
-          Stealth.config.nlp_integration = nil
+          Xip.config.log_all_nlp_results = false
+          Xip.config.nlp_integration = nil
         end
       end
 
@@ -334,19 +334,19 @@ describe Stealth::Controller::Messages do
 
     describe "mismatch" do
       describe 'raise_on_mismatch: true' do
-        it "should raise a Stealth::Errors::UnrecognizedMessage" do
+        it "should raise a Xip::Errors::UnrecognizedMessage" do
           test_controller.current_message.message = 'C'
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+          }.to raise_error(Xip::Errors::UnrecognizedMessage)
         end
 
         it "should NOT log if an nlp_result is not present" do
           test_controller.current_message.message = 'spicy'
-          expect(Stealth::Logger).to_not receive(:l)
+          expect(Xip::Logger).to_not receive(:l)
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+          }.to raise_error(Xip::Errors::UnrecognizedMessage)
         end
 
         it "should log if an nlp_result is present" do
@@ -354,7 +354,7 @@ describe Stealth::Controller::Messages do
           nlp_result = double('nlp_result')
           allow(nlp_result).to receive(:parsed_result).and_return({})
 
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: {}"
           )
@@ -363,16 +363,16 @@ describe Stealth::Controller::Messages do
 
           expect {
             test_controller.get_match(['nice', 'woot'])
-          }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+          }.to raise_error(Xip::Errors::UnrecognizedMessage)
         end
       end
 
       describe 'raise_on_mismatch: false' do
-        it "should not raise a Stealth::Errors::UnrecognizedMessage" do
+        it "should not raise a Xip::Errors::UnrecognizedMessage" do
           test_controller.current_message.message = 'C'
           expect {
             test_controller.get_match(['nice', 'woot'], raise_on_mismatch: false)
-          }.to_not raise_error(Stealth::Errors::UnrecognizedMessage)
+          }.to_not raise_error(Xip::Errors::UnrecognizedMessage)
         end
 
         it "should return the original message" do
@@ -384,7 +384,7 @@ describe Stealth::Controller::Messages do
 
         it "should NOT log if an nlp_result is not present" do
           test_controller.current_message.message = 'spicy'
-          expect(Stealth::Logger).to_not receive(:l)
+          expect(Xip::Logger).to_not receive(:l)
           test_controller.get_match(['nice', 'woot'], raise_on_mismatch: false)
         end
 
@@ -393,7 +393,7 @@ describe Stealth::Controller::Messages do
           nlp_result = double('nlp_result')
           allow(nlp_result).to receive(:parsed_result).and_return({})
 
-          expect(Stealth::Logger).to receive(:l).with(
+          expect(Xip::Logger).to receive(:l).with(
             topic: :nlp,
             message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: {}"
           )
@@ -538,7 +538,7 @@ describe Stealth::Controller::Messages do
           :woot => proc { x += 2 },
           'Sea' => proc { x += 3 }
         )
-      }.to raise_error(Stealth::Errors::ReservedHomophoneUsed, 'Cannot use `SEA`. Reserved for homophones.')
+      }.to raise_error(Xip::Errors::ReservedHomophoneUsed, 'Cannot use `SEA`. Reserved for homophones.')
     end
 
     it "should not run NLP if an ordinal is entered by the user" do
@@ -595,18 +595,18 @@ describe Stealth::Controller::Messages do
       end
 
       it 'should log the NLP result if log_all_nlp_results=true' do
-        Stealth.config.log_all_nlp_results = true
-        Stealth.config.nlp_integration = :luis
+        Xip.config.log_all_nlp_results = true
+        Xip.config.nlp_integration = :luis
 
         luis_client = double('luis_client')
         allow(luis_client).to receive(:understand).and_return(yes_intent_nlp_result)
-        allow(Stealth::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
+        allow(Xip::Nlp::Luis::Client).to receive(:new).and_return(luis_client)
 
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: :nlp,
           message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> Performing NLP."
         )
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: :nlp,
           message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: #{yes_intent_nlp_result.parsed_result.inspect}"
         )
@@ -620,8 +620,8 @@ describe Stealth::Controller::Messages do
           }
         )
 
-        Stealth.config.log_all_nlp_results = false
-        Stealth.config.nlp_integration = nil
+        Xip.config.log_all_nlp_results = false
+        Xip.config.nlp_integration = nil
       end
     end
 
@@ -695,7 +695,7 @@ describe Stealth::Controller::Messages do
       end
     end
 
-    it "should raise Stealth::Errors::UnrecognizedMessage if the reply does not match" do
+    it "should raise Xip::Errors::UnrecognizedMessage if the reply does not match" do
       test_controller.current_message.message = "C"
       x = 0
       expect {
@@ -703,12 +703,12 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+      }.to raise_error(Xip::Errors::UnrecognizedMessage)
     end
 
     it "should NOT log if an nlp_result is not present" do
       test_controller.current_message.message = 'spicy'
-      expect(Stealth::Logger).to_not receive(:l)
+      expect(Xip::Logger).to_not receive(:l)
 
       x = 0
       expect {
@@ -716,7 +716,7 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+      }.to raise_error(Xip::Errors::UnrecognizedMessage)
     end
 
     it "should log if an nlp_result is present" do
@@ -724,7 +724,7 @@ describe Stealth::Controller::Messages do
       nlp_result = double('nlp_result')
       allow(nlp_result).to receive(:parsed_result).and_return({})
 
-      expect(Stealth::Logger).to receive(:l).with(
+      expect(Xip::Logger).to receive(:l).with(
         topic: :nlp,
         message: "User 8b3e0a3c-62f1-401e-8b0f-615c9d256b1f -> NLP Result: {}"
       )
@@ -737,7 +737,7 @@ describe Stealth::Controller::Messages do
           'Buy' => proc { x += 1 },
           'Refinance' => proc { x += 2 }
         )
-      }.to raise_error(Stealth::Errors::UnrecognizedMessage)
+      }.to raise_error(Xip::Errors::UnrecognizedMessage)
     end
   end
 

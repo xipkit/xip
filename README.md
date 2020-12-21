@@ -1,8 +1,6 @@
-# <a href='https://hellostealth.org'><img src='logo.svg' width='400' alt='Stealth Logo' aria-label='hellostealth.org' /></a>
+# <a href='https://xipkit.com'><img src='logo.svg' width='400' alt='Xip Logo' aria-label='xipkit.com' /></a>
 
-Stealth is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
-
-[![CircleCI](https://circleci.com/gh/hellostealth/stealth.svg?style=svg)](https://circleci.com/gh/hellostealth/stealth)
+Xip is a Ruby framework for creating text and voice chatbots. It's design is inspired by Ruby on Rails's philosophy of convention over configuration. It has an MVC architecture with the slight caveat that `views` are aptly named `replies`.
 
 ## Features
 
@@ -15,41 +13,39 @@ Stealth is a Ruby framework for creating text and voice chatbots. It's design is
 
 ## Getting Started
 
-Getting started with Stealth is simple:
+Getting started with Xip is simple:
 
 ```
-> gem install stealth
-> stealth new <bot>
+> gem install xip
+> xip new <bot>
 ```
 
 ## Service Integrations
 
-Stealth is extensible. All service integrations are split out into separate Ruby Gems. Things like analytics and natural language processing ([NLP](https://en.wikipedia.org/wiki/Natural-language_processing)) can be added in as gems as well.
+Xip is extensible. All service integrations are split out into separate Ruby Gems. Things like analytics and natural language processing ([NLP](https://en.wikipedia.org/wiki/Natural-language_processing)) can be added in as gems as well.
 
 Currently, there are gems for:
 
 ### Messaging
-* [Facebook Messenger](https://github.com/hellostealth/stealth-facebook)
-* [Twilio SMS](https://github.com/hellostealth/stealth-twilio)
-* [Smooch](https://github.com/hellostealth/stealth-smooch)
+* [Facebook Messenger](https://github.com/xipkit/xip-facebook)
+* [Twilio SMS and Whatsapp](https://github.com/xipkit/xip-twilio)
 
 ### Voice
-* [Alexa Skill](https://github.com/hellostealth/stealth-alexa) (Early alpha)
+* [Alexa Skill](https://github.com/xipkit/xip-alexa) (Early alpha)
+* [Custom Voice](https://github.com/xipkit/xip-voice) (Early alpha)
 
 ### Natural Language Processing
-* [AWS Comprehend](https://github.com/hellostealth/stealth-aws-comprehend)
+* [LUIS](https://github.com/xipkit/xip-luis)
 
-### Analytics
-* [Mixpanel](https://github.com/hellostealth/stealth-mixpanel)
 
 ## Docs
 
-You can find our full docs [here](https://github.com/hellostealth/stealth/wiki). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
+You can find our full docs [here](https://github.com/xipkit/docs). If something is not clear in the docs, please file an issue! We consider all shortcomings in the docs as bugs.
 
 ## Versioning
 
-Stealth is versioned using [Semantic Versioning](https://semver.org), but it's more like the Linux Kernel. Major version releases are just as arbitrary as minor version releases. We strive to never break anything with any version change. Patches are still issues as the "third dot" in the version string.
+Xip is versioned using [Semantic Versioning](https://semver.org). Even with major versions, though, we will strive to minimize breaking changes.
 
 ## License
 
-"Stealth" and the Stealth logo are Copyright (c) 2020 Mauricio Gomes
+Xip is licensed under the MIT license. "Xip" and the Xip Kit logo are Copyright (c) 2020 Mauricio Gomes

@@ -1,14 +1,14 @@
-# Changelog for Stealth v2.0.0
+# Changelog for Xip v2.0.0
 
 ## Enhancements
 
 * [Controllers] Added support for Dev Jumping. This feature allows developers to jump around flows and states for bot's in development.
-* [NLP] Added base classes for `Stealth::Nlp::Result` and `Stealth::Nlp::Client` to be used by NLP drivers.
+* [NLP] Added base classes for `Xip::Nlp::Result` and `Xip::Nlp::Client` to be used by NLP drivers.
 * [Controllers] Scheduled replies no longer call `controller.route` when they run. Instead we `step_to` to the flow and state directly. This ensures the `route` is reserved for incoming messages.
 * [Catch All] Backtrace logging has been improved. The error message is now included first in the backtrace.
 * [Logger] The thread's ID (TID) is now included in every logging entry preceding the log type, ie "[facebook]"
 * [Interrupt] Interrupt detection has been added. See the docs for more info on this feature.
-* [Controllers] When user's flow is set to `catch_all` or `interrupt`, Stealth will ignore incoming messages. If you have interactive states in either of these controllers, you will need to move those interactions to a different controller.
+* [Controllers] When user's flow is set to `catch_all` or `interrupt`, Xip will ignore incoming messages. If you have interactive states in either of these controllers, you will need to move those interactions to a different controller.
 * [Sessions] Sessions can now be cleared by calling `session.clear_session`. Clearing a session removes the key from Redis.
 * [Logging] `primary_session`, `previous_session`, and `back_to_session` now explicitly logged
 * [Sessions] The session is no longer set on update or stepping witht destination flow and state match the existing session.
@@ -23,14 +23,14 @@
 * Added support for Bandwidth SMS
 * The `ServiceMessage` (current_message) now contains a `target_id`. This can be set by the platform driver to provide more information about the intended target of a message.
 * [Controller] Added a `do_nothing` method that prevents `catch_all` from firing when a controller action doesn't send replies nor progresses the session.
-* [Replies] If `text` and `speech` replies are specified as an Array, Stealth will now randomize the selected text.
+* [Replies] If `text` and `speech` replies are specified as an Array, Xip will now randomize the selected text.
 * [Generators] Added sample payload handling to generated bots since it can be tricky.
 * [Generators] Added `inflections.rb` to generators since we rely on `ActiveSupport::Inflector` to derive flow and controller names.
 * [Sessions] previous_session log entries now appear below current_session entries.
-* [Logging] Add option, `Stealth.config.transcript_logging`, to log incoming and outgoing messages.
+* [Logging] Add option, `Xip.config.transcript_logging`, to log incoming and outgoing messages.
 * [Server] The only HTTP header passed along to `handle_message_job` is now `HTTP_HOST`.
 * [Controllers] Added `set_back_to` and `step_back` to allow user specified "redirect back". Useful for multi-state transitions that would otherwise not be possible with just `previous_session`.
-* [Configuration] Stealth::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
+* [Configuration] Xip::Configuration now returns `nil` for a configuration option that is missing. It still returns a `NoMethodError` if attempting to access a key from a parent node that is also missing.
 * [Reloading] Bots in development mode now hot reload! It's no longer necessary to stop your local server.
 * [Production] Production bots now eager load bot code to improve copy-on-write performance. The `puma.rb` config has been updated with instructions for multiple workers.
 * [Flows] You can now specify custom options when defining states. These options can later be accessed via the flow specification.
@@ -38,16 +38,16 @@
 * [CoreExt] `String#normalize` no longer removes quotation marks.
 * [Controllers] Alpha ordinal checks are now done against a "normalized" string without punctuation. See above.
 * [Controllers] `normalized_msg` and `homophone_translated_msg` are now memoized for performance.
-* [Errors] `Stealth::Errors::MessageNotRecognized` has been renamed to `Stealth::Errors::UnrecognizedMessage`
-* [Controllers] When `handle_message` or `get_match` raise a `Stealth::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
-* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Stealth::Errors::UserOptOut` or `Stealth::Errors::InvalidSessionId` errors.
+* [Errors] `Xip::Errors::MessageNotRecognized` has been renamed to `Xip::Errors::UnrecognizedMessage`
+* [Controllers] When `handle_message` or `get_match` raise a `Xip::Errors::UnrecognizedMessage`, the user is first routed to a new `UnrecognizedMessagesController` to perform NLP. If that controller fails to match, the `catch_all` is run as normal.
+* [Errors] Client errors now call respective BotController actions: `handle_opt_out` and `handle_invalid_session_id`. Each client is responsible for raising `Xip::Errors::UserOptOut` or `Xip::Errors::InvalidSessionId` errors.
 * [Controllers] `handle_message` and `get_match` now detect homophones for alpha ordinals (A-Z)
 * [Controllers] `handle_message` and `get_match` now ignore single and double quotes for alpha-ordinals
 * [CoreExt] Strings now have a `normalize` method for removing padding and quotes
 * [Controllers] Improved logging when `UnrecognizedMessagesController` runs.
 * [Controllers] State transitions (via `step_to`, `update_session_to`, `step_to_at`, `step_to_in`, and `set_back_to`) now accept a session `slug` argument.
 * [Replies] Added support for sub-state replies. `step_to` can now take a `pos` argument that will force any resulting `send_replies` to be sent starting at the `pos` specified. `pos` can also be negative, for example, `-1` will force `send_replies` to send replies starting at (only) the last reply.
-* [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Stealth.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
+* [Replies] Dynamic delays are automatically sent before each reply. This can be disabled by setting `Xip.config.auto_insert_delays` to `false`. If a delay is already included, the auto-delay is skipped.
 * [Controllers] `handle_message` now supports `Regexp` keys.
 * [Configuration] `database.yml` is now parsed with ERB in order to support environment variables. Thanks @malkovro.
 * [Replies] Speech and SSML replies now use `speech` and `ssml` as keys, respectively, instead of `text`
@@ -73,25 +73,25 @@
 * [Controllers] current_user_id has now been completely removed since becoming deprecated in 1.1.0.
 * [Ruby] MRI 2.4 is no longer supported as we depend on ActiveSupport 6.0 now. Rails 6.0 only supports Ruby MRI 2.5+.
 
-# Changelog for Stealth v1.1.5
+# Changelog for Xip v1.1.5
 
 ## Enhancements
 
 * [Replies] Replies will now always send the `sender_id` that came in to the service drivers. This ensures `current_session_id` hasn't been modified which would cause replies to fail to send.
 
-# Changelog for Stealth v1.1.4
+# Changelog for Xip v1.1.4
 
 ## Bug Fixes
 
 * [General] Fixed controller and model concern load order. Previously files in the concerns folder were not loading before their respective controllers or models causing LoadErrors.
 
-# Changelog for Stealth v1.1.3
+# Changelog for Xip v1.1.3
 
 ## Bug Fixes
 
 * [Server] Additional CONTENT_TYPE fixes that would cause the server to 500 when it was missing.
 
-# Changelog for Stealth v1.1.2
+# Changelog for Xip v1.1.2
 
 ## Bug Fixes
 
@@ -101,18 +101,18 @@
 
 * [CI] Added Ruby 2.6 to build.
 
-# Changelog for Stealth v1.1.1
+# Changelog for Xip v1.1.1
 
 ## Bug Fixes
 
 * [Server] Does not auto-return an HTTP 202. Leaves it up to the drivers again.
 
-# Changelog for Stealth v1.1.0
+# Changelog for Xip v1.1.0
 
 ## Breaking Changes
 
-* [Sidekiq] Sidekiq queues have been renamed from `webhooks` and `default` to `stealth_webhooks` and `stealth_replies`. Please ensure your `Procfile` is adjusted accordingly.
-* [Flows] `flow_map.current_state.fails_to` now returns a `Stealth::Session` instead of a `Stealth::Flow::State`. This might affect your `catch_alls`.
+* [Sidekiq] Sidekiq queues have been renamed from `webhooks` and `default` to `xip_webhooks` and `xip_replies`. Please ensure your `Procfile` is adjusted accordingly.
+* [Flows] `flow_map.current_state.fails_to` now returns a `Xip::Session` instead of a `Xip::Flow::State`. This might affect your `catch_alls`.
 
 ## Enhancements
 

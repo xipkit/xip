@@ -2,15 +2,15 @@
 
 require 'spec_helper'
 
-describe "Stealth::Dispatcher" do
+describe "Xip::Dispatcher" do
 
-    class Stealth::Services::Facebook::MessageHandler
+    class Xip::Services::Facebook::MessageHandler
 
     end
 
     describe 'coordinate' do
       let(:dispatcher) {
-        Stealth::Dispatcher.new(
+        Xip::Dispatcher.new(
           service: 'facebook',
           params: {},
           headers: {}
@@ -19,7 +19,7 @@ describe "Stealth::Dispatcher" do
 
       it 'should call coordinate on the message handler' do
         message_handler = double
-        expect(Stealth::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
+        expect(Xip::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
         expect(message_handler).to receive(:coordinate)
 
         dispatcher.coordinate
@@ -27,14 +27,14 @@ describe "Stealth::Dispatcher" do
     end
 
     describe 'process' do
-      class StubbedBotController < Stealth::Controller
+      class StubbedBotController < Xip::Controller
         def route
           true
         end
       end
 
       let(:dispatcher) {
-        Stealth::Dispatcher.new(
+        Xip::Dispatcher.new(
           service: 'facebook',
           params: {},
           headers: {}
@@ -49,7 +49,7 @@ describe "Stealth::Dispatcher" do
         message_handler = double
 
         # Stub out the message handler to return a service_message
-        expect(Stealth::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
+        expect(Xip::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
         expect(message_handler).to receive(:process).and_return(fb_message.message_with_text)
 
         # Stub out BotController and set session
@@ -63,14 +63,14 @@ describe "Stealth::Dispatcher" do
         message_handler = double
 
         # Stub out the message handler to return a service_message
-        expect(Stealth::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
+        expect(Xip::Services::Facebook::MessageHandler).to receive(:new).and_return(message_handler)
         expect(message_handler).to receive(:process).and_return(fb_message.message_with_text)
 
         # Stub out BotController and set session
         expect(BotController).to receive(:new).and_return(stubbed_controller)
         stubbed_controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
 
-        Stealth.config.transcript_logging = true
+        Xip.config.transcript_logging = true
         expect(dispatcher).to receive(:log_incoming_message).with(fb_message.message_with_text)
         dispatcher.process
       end

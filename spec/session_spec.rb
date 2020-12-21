@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 class FlowMap
-  include Stealth::Flow
+  include Xip::Flow
 
   flow :new_todo do
     state :new
@@ -17,21 +17,21 @@ class FlowMap
   end
 end
 
-describe "Stealth::Session" do
+describe "Xip::Session" do
   let(:id) { '0xDEADBEEF' }
 
   it "should raise an error if $redis is not set" do
     $redis = nil
 
     expect {
-      Stealth::Session.new(id: id)
-    }.to raise_error(Stealth::Errors::RedisNotConfigured)
+      Xip::Session.new(id: id)
+    }.to raise_error(Xip::Errors::RedisNotConfigured)
 
     $redis = MockRedis.new
   end
 
   describe "without a session" do
-    let(:session) { Stealth::Session.new(id: id) }
+    let(:session) { Xip::Session.new(id: id) }
 
     it "should have nil flow and state" do
       expect(session.flow).to be_nil
@@ -51,7 +51,7 @@ describe "Stealth::Session" do
 
   describe "with a session" do
     let(:session) do
-      session = Stealth::Session.new(id: id)
+      session = Xip::Session.new(id: id)
       session.set_session(new_flow: 'marco', new_state: 'polo')
       session
     end
@@ -61,7 +61,7 @@ describe "Stealth::Session" do
     end
 
     it "should return the state" do
-      expect(session.state).to be_a(Stealth::Flow::State)
+      expect(session.state).to be_a(Xip::Flow::State)
       expect(session.state).to eq :polo
     end
 
@@ -80,7 +80,7 @@ describe "Stealth::Session" do
   end
 
   describe "incrementing and decrementing" do
-    let(:session) { Stealth::Session.new(id: id) }
+    let(:session) { Xip::Session.new(id: id) }
 
     it "should increment the state" do
       session.set_session(new_flow: 'new_todo', new_state: 'get_due_date')
@@ -109,37 +109,37 @@ describe "Stealth::Session" do
 
   describe "==" do
     let(:session) {
-      _session = Stealth::Session.new(id: id, type: :primary)
+      _session = Xip::Session.new(id: id, type: :primary)
       _session.set_session(new_flow: 'hello', new_state: 'say_hola')
       _session
     }
 
     it "should return false if the session ids do not" do
-      other_session = Stealth::Session.new(id: 'xyz123', type: :primary)
+      other_session = Xip::Session.new(id: 'xyz123', type: :primary)
       other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
       expect(session == other_session).to be false
     end
 
     it "should return false if the states do not" do
-      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session = Xip::Session.new(id: id, type: :primary)
       other_session.set_session(new_flow: 'hello', new_state: 'say_hola2')
       expect(session == other_session).to be false
     end
 
     it "should return false if flows do not match" do
-      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session = Xip::Session.new(id: id, type: :primary)
       other_session.set_session(new_flow: 'hello2', new_state: 'say_hola')
       expect(session == other_session).to be false
     end
 
     it 'should return false if the session type does not match' do
-      other_session = Stealth::Session.new(id: id, type: :back_to)
+      other_session = Xip::Session.new(id: id, type: :back_to)
       other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
       expect(session == other_session).to be false
     end
 
     it 'should return true if the session id, flow, state, and session types match' do
-      other_session = Stealth::Session.new(id: id, type: :primary)
+      other_session = Xip::Session.new(id: id, type: :primary)
       other_session.set_session(new_flow: 'hello', new_state: 'say_hola')
       expect(session == other_session).to be true
     end
@@ -148,30 +148,30 @@ describe "Stealth::Session" do
   describe "self.is_a_session_string?" do
     it "should return false for state strings" do
       session_string = 'say_hello'
-      expect(Stealth::Session.is_a_session_string?(session_string)).to be false
+      expect(Xip::Session.is_a_session_string?(session_string)).to be false
     end
 
     it "should return false for an incomplete session string" do
       session_string = 'hello->'
-      expect(Stealth::Session.is_a_session_string?(session_string)).to be false
+      expect(Xip::Session.is_a_session_string?(session_string)).to be false
     end
 
     it "should return true for a complete session string" do
       session_string = 'hello->say_hello'
-      expect(Stealth::Session.is_a_session_string?(session_string)).to be true
+      expect(Xip::Session.is_a_session_string?(session_string)).to be true
     end
   end
 
   describe "self.canonical_session_slug" do
     it "should generate a canonical session slug given a flow and state as symbols" do
       expect(
-        Stealth::Session.canonical_session_slug(flow: :hello, state: :say_hello)
+        Xip::Session.canonical_session_slug(flow: :hello, state: :say_hello)
       ).to eq 'hello->say_hello'
     end
 
     it "should generate a canonical session slug given a flow and state as strings" do
       expect(
-        Stealth::Session.canonical_session_slug(flow: 'hello', state: 'say_hello')
+        Xip::Session.canonical_session_slug(flow: 'hello', state: 'say_hello')
       ).to eq 'hello->say_hello'
     end
   end
@@ -180,22 +180,22 @@ describe "Stealth::Session" do
     it "should return the flow and string as a hash with symbolized keys" do
       slug = 'hello->say_hello'
       expect(
-        Stealth::Session.flow_and_state_from_session_slug(slug: slug)
+        Xip::Session.flow_and_state_from_session_slug(slug: slug)
       ).to eq({ flow: 'hello', state: 'say_hello' })
     end
 
     it "should not raise if slug is nil" do
       slug = nil
       expect(
-        Stealth::Session.flow_and_state_from_session_slug(slug: slug)
+        Xip::Session.flow_and_state_from_session_slug(slug: slug)
       ).to eq({ flow: nil, state: nil })
     end
   end
 
   describe "setting sessions" do
-    let(:session) { Stealth::Session.new(id: id) }
-    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
-    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
+    let(:session) { Xip::Session.new(id: id) }
+    let(:previous_session) { Xip::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Xip::Session.new(id: id, type: :back_to) }
 
     before(:each) do
       $redis.del(id)
@@ -223,22 +223,22 @@ describe "Stealth::Session" do
     end
 
     it "should set an expiration for current_session if session_ttl is specified" do
-      Stealth.config.session_ttl = 500
+      Xip.config.session_ttl = 500
       session.set_session(new_flow: 'marco', new_state: 'polo')
       expect($redis.ttl(id)).to be > 0
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
     end
 
     it "should set an expiration for previous_session if session_ttl is specified" do
-      Stealth.config.session_ttl = 500
+      Xip.config.session_ttl = 500
       $redis.set(id, 'new_todo->new')
       session.set_session(new_flow: 'marco', new_state: 'polo')
       expect($redis.ttl([id, 'previous'].join('-'))).to be > 0
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
     end
 
     it "should NOT set an expiration if session_ttl is not specified" do
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
       session.set_session(new_flow: 'new_todo', new_state: 'get_due_date')
       expect($redis.ttl(id)).to eq -1 # Does not expire
     end
@@ -249,17 +249,17 @@ describe "Stealth::Session" do
     end
 
     it "should set an expiration for back_to if session_ttl is specified" do
-      Stealth.config.session_ttl = 500
+      Xip.config.session_ttl = 500
       back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
       expect($redis.ttl([id, 'back_to'].join('-'))).to be > 0
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
     end
   end
 
   describe "getting sessions" do
-    let(:session) { Stealth::Session.new(id: id) }
-    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
-    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
+    let(:session) { Xip::Session.new(id: id) }
+    let(:previous_session) { Xip::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Xip::Session.new(id: id, type: :back_to) }
 
     before(:each) do
       $redis.del(id)
@@ -279,16 +279,16 @@ describe "Stealth::Session" do
     end
 
     it "should update the expiration of current_session if session_ttl is set" do
-      Stealth.config.session_ttl = 50
+      Xip.config.session_ttl = 50
       session.set_session(new_flow: 'marco', new_state: 'polo')
       expect($redis.ttl(id)).to be_between(0, 50).inclusive
 
-      Stealth.config.session_ttl = 500
+      Xip.config.session_ttl = 500
       session.session = nil # reset memoization
       session.get_session
       expect($redis.ttl(id)).to be > 100
 
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
     end
 
     it "should return the stored back_to_session" do
@@ -297,23 +297,23 @@ describe "Stealth::Session" do
     end
 
     it "should update the expiration of back_to_session if session_ttl is set" do
-      Stealth.config.session_ttl = 50
+      Xip.config.session_ttl = 50
       back_to_session.set_session(new_flow: 'marco', new_state: 'polo')
       expect($redis.ttl([id, 'back_to'].join('-'))).to be_between(0, 50).inclusive
 
-      Stealth.config.session_ttl = 500
+      Xip.config.session_ttl = 500
       back_to_session.session = nil # reset memoization
       back_to_session.get_session
       expect($redis.ttl([id, 'back_to'].join('-'))).to be > 100
 
-      Stealth.config.session_ttl = 0
+      Xip.config.session_ttl = 0
     end
   end
 
   describe "clearing sessions" do
-    let(:session) { Stealth::Session.new(id: id) }
-    let(:previous_session) { Stealth::Session.new(id: id, type: :previous) }
-    let(:back_to_session) { Stealth::Session.new(id: id, type: :back_to) }
+    let(:session) { Xip::Session.new(id: id) }
+    let(:previous_session) { Xip::Session.new(id: id, type: :previous) }
+    let(:back_to_session) { Xip::Session.new(id: id, type: :back_to) }
 
     before(:each) do
       session.send(:persist_key, key: session.session_key, value: '1')
@@ -342,24 +342,24 @@ describe "Stealth::Session" do
 
   describe "self.slugify" do
     it "should return a session slug given a flow and state" do
-      expect(Stealth::Session.slugify(flow: 'hello', state: 'world')).to eq 'hello->world'
+      expect(Xip::Session.slugify(flow: 'hello', state: 'world')).to eq 'hello->world'
     end
 
     it "should raise an ArgumentError if flow is blank" do
       expect {
-        Stealth::Session.slugify(flow: '', state: 'world')
+        Xip::Session.slugify(flow: '', state: 'world')
       }.to raise_error(ArgumentError)
     end
 
     it "should raise an ArgumentError if state is blank" do
       expect {
-        Stealth::Session.slugify(flow: 'hello', state: nil)
+        Xip::Session.slugify(flow: 'hello', state: nil)
       }.to raise_error(ArgumentError)
     end
 
     it "should raise an ArgumentError if flow and state are blank" do
       expect {
-        Stealth::Session.slugify(flow: nil, state: nil)
+        Xip::Session.slugify(flow: nil, state: nil)
       }.to raise_error(ArgumentError)
     end
   end

@@ -4,12 +4,12 @@ require 'spec_helper'
 
 $:.unshift File.expand_path("../support/helpers", __dir__)
 
-describe "Stealth::Controller helpers" do
+describe "Xip::Controller helpers" do
 
-  Stealth::Controller.helpers_path = File.expand_path("../support/helpers", __dir__)
+  Xip::Controller.helpers_path = File.expand_path("../support/helpers", __dir__)
 
   module Fun
-    class GamesController < Stealth::Controller
+    class GamesController < Xip::Controller
       helper :all
 
       def say_hello_world
@@ -21,18 +21,18 @@ describe "Stealth::Controller helpers" do
       end
     end
 
-    class PdfController < Stealth::Controller
+    class PdfController < Xip::Controller
       def say_pdf_name
         generate_pdf_name
       end
     end
   end
 
-  class BaseController < Stealth::Controller
+  class BaseController < Xip::Controller
 
   end
 
-  class AllHelpersController < Stealth::Controller
+  class AllHelpersController < Xip::Controller
     helper :all
   end
 
@@ -42,7 +42,7 @@ describe "Stealth::Controller helpers" do
     end
   end
 
-  class SizzleController < Stealth::Controller
+  class SizzleController < Xip::Controller
     helper :standalone
 
     def say_sizzle
@@ -50,13 +50,13 @@ describe "Stealth::Controller helpers" do
     end
   end
 
-  class HelpersTypoController < Stealth::Controller
+  class HelpersTypoController < Xip::Controller
     path = File.expand_path("../support/helpers_typo", __dir__)
     $:.unshift(path)
     self.helpers_path = path
   end
 
-  class VoodooController < Stealth::Controller
+  class VoodooController < Xip::Controller
     helpers_path = File.expand_path("../support/alternate_helpers", __dir__)
 
     # Reload helpers
@@ -78,8 +78,8 @@ describe "Stealth::Controller helpers" do
     end
 
     it "should not load helpers if none are specified by default and include_all_helpers = false" do
-      Stealth::Controller.include_all_helpers = false
-      class HelperlessController < Stealth::Controller; end
+      Xip::Controller.include_all_helpers = false
+      class HelperlessController < Xip::Controller; end
       expect(HelperlessController._helpers.instance_methods).to eq []
     end
 

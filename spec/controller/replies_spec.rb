@@ -2,15 +2,15 @@
 
 require 'spec_helper'
 
-describe "Stealth::Controller replies" do
+describe "Xip::Controller replies" do
 
-  Stealth::Controller._replies_path = File.expand_path("../replies", __dir__)
+  Xip::Controller._replies_path = File.expand_path("../replies", __dir__)
 
   let(:facebook_message) { SampleMessage.new(service: 'facebook') }
   let(:controller) { MessagesController.new(service_message: facebook_message.message_with_text) }
 
   # Stub out base Facebook integration
-  module Stealth
+  module Xip
     module Services
       module Facebook
         class ReplyHandler
@@ -24,7 +24,7 @@ describe "Stealth::Controller replies" do
     end
   end
 
-  class MessagesController < Stealth::Controller
+  class MessagesController < Xip::Controller
     def say_oi
       @first_name = "Presley"
       send_replies
@@ -68,7 +68,7 @@ describe "Stealth::Controller replies" do
 
     def say_inline_reply
       reply = [
-        { 'reply_type' => 'text', 'text' => 'Hi, Morty. Welcome to Stealth bot...' },
+        { 'reply_type' => 'text', 'text' => 'Hi, Morty. Welcome to Xip bot...' },
         { 'reply_type' => 'delay', 'duration' => 2 },
         { 'reply_type' => 'text', 'text' => 'We offer users an awesome Ruby framework for building chat bots.' }
       ]
@@ -78,13 +78,13 @@ describe "Stealth::Controller replies" do
   end
 
   describe "missing reply" do
-    it "should raise a Stealth::Errors::ReplyNotFound" do
+    it "should raise a Xip::Errors::ReplyNotFound" do
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_uh_oh")
 
       expect {
         controller.send_replies
-      }.to raise_error(Stealth::Errors::ReplyNotFound)
+      }.to raise_error(Xip::Errors::ReplyNotFound)
     end
   end
 
@@ -129,15 +129,15 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_oi")
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
     end
 
     after(:each) do
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -173,15 +173,15 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
     end
 
     after(:each) do
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -217,15 +217,15 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_custom_reply")
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
     end
 
     after(:each) do
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -270,15 +270,15 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_inline_reply")
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
     end
 
     after(:each) do
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
 
     it "should translate each reply_type in the reply" do
@@ -314,8 +314,8 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_msgs_without_breaks")
     end
@@ -345,9 +345,9 @@ describe "Stealth::Controller replies" do
       expect(stubbed_handler).to receive(:text).exactly(2).times
       expect(stubbed_handler).to_not receive(:delay)
 
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
       controller.say_msgs_without_breaks
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
   end
 
@@ -356,15 +356,15 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
-      Stealth.config.auto_insert_delays = false
+      Xip.config.auto_insert_delays = false
     end
 
     after(:each) do
-      Stealth.config.auto_insert_delays = true
+      Xip.config.auto_insert_delays = true
     end
 
     it "should update the lock for each reply_type in the reply" do
@@ -454,8 +454,8 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer_with_dynamic")
     end
@@ -465,7 +465,7 @@ describe "Stealth::Controller replies" do
       allow(stubbed_handler).to receive(:delay).exactly(2).times
       allow(stubbed_client).to receive(:transmit).exactly(4).times
 
-      delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
+      delay = Xip.config.dynamic_delay_muliplier * Xip::Controller::DynamicDelay::SHORT_DELAY
       expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
@@ -475,8 +475,8 @@ describe "Stealth::Controller replies" do
       allow(stubbed_handler).to receive(:delay).exactly(2).times
       allow(stubbed_client).to receive(:transmit).exactly(4).times
 
-      Stealth.config.dynamic_delay_muliplier = 5
-      delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
+      Xip.config.dynamic_delay_muliplier = 5
+      delay = Xip.config.dynamic_delay_muliplier * Xip::Controller::DynamicDelay::SHORT_DELAY
       expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
@@ -486,8 +486,8 @@ describe "Stealth::Controller replies" do
       allow(stubbed_handler).to receive(:delay).exactly(2).times
       allow(stubbed_client).to receive(:transmit).exactly(4).times
 
-      Stealth.config.dynamic_delay_muliplier = 0.1
-      delay = Stealth.config.dynamic_delay_muliplier * Stealth::Controller::DynamicDelay::SHORT_DELAY
+      Xip.config.dynamic_delay_muliplier = 0.1
+      delay = Xip.config.dynamic_delay_muliplier * Xip::Controller::DynamicDelay::SHORT_DELAY
       expect(controller).to receive(:sleep).exactly(2).times.with(delay)
       controller.say_offer_with_dynamic
     end
@@ -541,22 +541,22 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
     end
 
     describe "text replies" do
       before(:each) do
         allow(controller.current_session).to receive(:flow_string).and_return("message")
         allow(controller.current_session).to receive(:state_string).and_return("say_randomize_text")
-        Stealth.config.auto_insert_delays = false
+        Xip.config.auto_insert_delays = false
       end
 
       after(:each) do
-        Stealth.config.auto_insert_delays = true
+        Xip.config.auto_insert_delays = true
       end
 
       it "should receive a single text string" do
-        allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new) do |*args|
+        allow(Xip::Services::Facebook::ReplyHandler).to receive(:new) do |*args|
           expect(args.first[:reply]['text']).to be_a(String)
           stubbed_handler
         end
@@ -572,8 +572,8 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
       allow(stubbed_client).to receive(:transmit).and_return(true)
@@ -614,23 +614,23 @@ describe "Stealth::Controller replies" do
     let(:stubbed_client) { double("client") }
 
     before(:each) do
-      allow(Stealth::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
-      allow(Stealth::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
+      allow(Xip::Services::Facebook::ReplyHandler).to receive(:new).and_return(stubbed_handler)
+      allow(Xip::Services::Facebook::Client).to receive(:new).and_return(stubbed_client)
       allow(controller.current_session).to receive(:flow_string).and_return("message")
       allow(controller.current_session).to receive(:state_string).and_return("say_offer")
       allow(stubbed_handler).to receive(:delay).exactly(1).time
       allow(stubbed_handler).to receive(:text).exactly(1).time
     end
 
-    describe "Stealth::Errors::UserOptOut" do
+    describe "Xip::Errors::UserOptOut" do
       before(:each) do
         expect(stubbed_client).to receive(:transmit).and_raise(
-          Stealth::Errors::UserOptOut.new('boom')
+          Xip::Errors::UserOptOut.new('boom')
         ).once # Retuns early; doesn't send the remaining replies in the file
       end
 
       it "should log the unhandled exception if the controller does not have a handle_opt_out method" do
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: :err,
           message: "User #{facebook_message.sender_id} unhandled exception due to opt-out."
         )
@@ -640,7 +640,7 @@ describe "Stealth::Controller replies" do
 
       it "should call handle_opt_out method" do
         expect(controller).to receive(:handle_opt_out)
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: 'facebook',
           message: "User #{facebook_message.sender_id} opted out. [boom]"
         )
@@ -649,15 +649,15 @@ describe "Stealth::Controller replies" do
       end
     end
 
-    describe "Stealth::Errors::InvalidSessionID" do
+    describe "Xip::Errors::InvalidSessionID" do
       before(:each) do
         expect(stubbed_client).to receive(:transmit).and_raise(
-          Stealth::Errors::InvalidSessionID.new('boom')
+          Xip::Errors::InvalidSessionID.new('boom')
         ).once # Retuns early; doesn't send the remaining replies in the file
       end
 
       it "should log the unhandled exception if the controller does not have a handle_invalid_session_id method" do
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: :err,
           message: "User #{facebook_message.sender_id} unhandled exception due to invalid session_id."
         )
@@ -667,7 +667,7 @@ describe "Stealth::Controller replies" do
 
       it "should call handle_invalid_session_id method" do
         expect(controller).to receive(:handle_invalid_session_id)
-        expect(Stealth::Logger).to receive(:l).with(
+        expect(Xip::Logger).to receive(:l).with(
           topic: 'facebook',
           message: "User #{facebook_message.sender_id} has an invalid session_id. [boom]"
         )

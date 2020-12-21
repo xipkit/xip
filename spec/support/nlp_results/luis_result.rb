@@ -1,5 +1,5 @@
 module TestNlpResult
-  class Luis < Stealth::Nlp::Result
+  class Luis < Xip::Nlp::Result
 
     ENTITY_MAP = {
       'money' => :currency, 'number' => :number, 'email' => :email,

@@ -1,5 +1,5 @@
 - reply_type: text
-  text: "Hi, Morty. Welcome to Stealth bot..."
+  text: "Hi, Morty. Welcome to Xip bot..."
 - reply_type: delay
   duration: dynamic
 - reply_type: text

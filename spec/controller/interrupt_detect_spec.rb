@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe "Stealth::Controller::InterruptDetect" do
+describe "Xip::Controller::InterruptDetect" do
 
   let(:fb_message) { SampleMessage.new(service: 'facebook') }
   let(:controller) { VadersController.new(service_message: fb_message.message_with_text) }
@@ -16,7 +16,7 @@ describe "Stealth::Controller::InterruptDetect" do
     it "should return the current lock for the session if it is locked" do
       $redis.set(lock_key, example_lock)
       current_lock = controller.current_lock
-      expect(current_lock).to be_a(Stealth::Lock)
+      expect(current_lock).to be_a(Xip::Lock)
       expect(current_lock.session_id).to eq fb_message.sender_id
     end
 
@@ -38,12 +38,12 @@ describe "Stealth::Controller::InterruptDetect" do
     let(:interrupts_controller) { InterruptController.new(service_message: fb_message) }
 
     it "should return false if an InterruptsController is not defined" do
-      expect(Stealth::Logger).to receive(:l).with(
+      expect(Xip::Logger).to receive(:l).with(
         topic: 'interrupt',
         message: "Interrupt detected for session #{fb_message.sender_id}"
       ).ordered
 
-      expect(Stealth::Logger).to receive(:l).with(
+      expect(Xip::Logger).to receive(:l).with(
         topic: 'interrupt',
         message: 'Ignoring interrupt; InterruptsController not defined.'
       ).ordered
@@ -52,7 +52,7 @@ describe "Stealth::Controller::InterruptDetect" do
     end
 
     it "should call say_interrupted on the InterruptsController" do
-      class InterruptsController < Stealth::Controller
+      class InterruptsController < Xip::Controller
         def say_interrupted
         end
       end
@@ -62,17 +62,17 @@ describe "Stealth::Controller::InterruptDetect" do
     end
 
     it "should log if the InterruptsController#say_interrupted does not progress the session" do
-      class InterruptsController < Stealth::Controller
+      class InterruptsController < Xip::Controller
         def say_interrupted
         end
       end
 
-      expect(Stealth::Logger).to receive(:l).with(
+      expect(Xip::Logger).to receive(:l).with(
         topic: 'interrupt',
         message: "Interrupt detected for session #{fb_message.sender_id}"
       ).ordered
 
-      expect(Stealth::Logger).to receive(:l).with(
+      expect(Xip::Logger).to receive(:l).with(
         topic: 'interrupt',
         message: 'Did not send replies, update session, or step'
       ).ordered
@@ -81,14 +81,14 @@ describe "Stealth::Controller::InterruptDetect" do
     end
 
     it "should catch StandardError from within InterruptController and log it" do
-      class InterruptsController < Stealth::Controller
+      class InterruptsController < Xip::Controller
         def say_interrupted
-          raise Stealth::Errors::ReplyNotFound
+          raise Xip::Errors::ReplyNotFound
         end
       end
 
       # Once for the interrupt detection, once for the error
-      expect(Stealth::Logger).to receive(:l).exactly(2).times
+      expect(Xip::Logger).to receive(:l).exactly(2).times
 
       controller.run_interrupt_action
     end
@@ -110,7 +110,7 @@ describe "Stealth::Controller::InterruptDetect" do
     it "should return false if the current thread owns the lock" do
       $redis.set(lock_key, example_lock)
       lock = controller.current_lock
-      expect(lock).to receive(:tid).and_return(Stealth.tid)
+      expect(lock).to receive(:tid).and_return(Xip.tid)
 
       expect(controller.send(:interrupt_detected?)).to be false
     end
@@ -126,7 +126,7 @@ describe "Stealth::Controller::InterruptDetect" do
     it "should return true if the current tid matches the lock tid" do
       $redis.set(lock_key, example_lock)
       lock = controller.current_lock
-      expect(lock).to receive(:tid).and_return(Stealth.tid)
+      expect(lock).to receive(:tid).and_return(Xip.tid)
       expect(controller.send(:current_thread_has_control?)).to be true
     end
 

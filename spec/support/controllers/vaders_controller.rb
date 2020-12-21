@@ -1,4 +1,4 @@
-class VadersController < Stealth::Controller
+class VadersController < Xip::Controller
   def my_action
     raise "oops"
   end

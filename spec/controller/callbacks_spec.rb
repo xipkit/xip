@@ -4,7 +4,7 @@ require 'spec_helper'
 
 $history = []
 
-class BotController < Stealth::Controller
+class BotController < Xip::Controller
   before_action :fetch_user_name
 
   def some_action
@@ -135,7 +135,7 @@ class OtherFlowTestersController < BotController
 end
 
 class FlowMap
-  include Stealth::Flow
+  include Xip::Flow
 
   flow :flow_tester do
     state :my_action
@@ -152,7 +152,7 @@ class FlowMap
   end
 end
 
-describe "Stealth::Controller callbacks" do
+describe "Xip::Controller callbacks" do
 
   let(:facebook_message) { SampleMessage.new(service: 'facebook') }
 

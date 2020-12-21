@@ -1,1 +1,0 @@
-require 'stealth/base'

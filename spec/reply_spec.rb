@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 
-describe "Stealth::Reply" do
+describe "Xip::Reply" do
 
   let!(:unstructured_text) {
     { 'reply_type' => 'text', 'text' => 'Hello World!' }
@@ -10,8 +10,8 @@ describe "Stealth::Reply" do
   let!(:unstructured_delay) {
     { 'reply_type' => 'delay', 'duration' => 'dynamic' }
   }
-  let(:text_reply) { Stealth::Reply.new(unstructured_reply: unstructured_text) }
-  let(:delay_reply) { Stealth::Reply.new(unstructured_reply: unstructured_delay) }
+  let(:text_reply) { Xip::Reply.new(unstructured_reply: unstructured_text) }
+  let(:delay_reply) { Xip::Reply.new(unstructured_reply: unstructured_delay) }
 
   describe 'hash-like [] getter' do
     it 'should return the values' do
@@ -47,14 +47,14 @@ describe "Stealth::Reply" do
   end
 
   describe 'self.dynamic_delay' do
-    it 'should return a new Stealth::Reply' do
-      expect(Stealth::Reply.dynamic_delay).to be_a(Stealth::Reply)
+    it 'should return a new Xip::Reply' do
+      expect(Xip::Reply.dynamic_delay).to be_a(Xip::Reply)
     end
 
     it 'should be a dynamic delay' do
-      expect(Stealth::Reply.dynamic_delay.delay?).to be true
-      expect(Stealth::Reply.dynamic_delay.reply_type).to eq 'delay'
-      expect(Stealth::Reply.dynamic_delay['duration']).to eq 'dynamic'
+      expect(Xip::Reply.dynamic_delay.delay?).to be true
+      expect(Xip::Reply.dynamic_delay.reply_type).to eq 'delay'
+      expect(Xip::Reply.dynamic_delay['duration']).to eq 'dynamic'
     end
   end
 

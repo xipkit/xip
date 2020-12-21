@@ -6,7 +6,7 @@ default: &default
     setup:
       greeting: # Greetings are broken up by locale
         - locale: default
-          text: "Welcome to the Stealth bot 🤖"
+          text: "Welcome to the Xip bot 🤖"
       persistent_menu:
         - type: payload
           text: Main Menu

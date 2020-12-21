@@ -1,5 +1,5 @@
 - reply_type: text
-  text: "Yo, Morty from Twitter! Welcome to Stealth bot..."
+  text: "Yo, Morty from Twitter! Welcome to Xip bot..."
 - reply_type: delay
   duration: 2
 - reply_type: text

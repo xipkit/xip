@@ -2,12 +2,12 @@
 
 require 'spec_helper'
 
-describe "Stealth::Configuration" do
+describe "Xip::Configuration" do
 
   describe "accessing via method calling" do
     let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'support', 'services.yml')) }
-    let(:parsed_config) { YAML.load(ERB.new(services_yml).result)[Stealth.env] }
-    let(:config) { Stealth.load_services_config!(services_yml) }
+    let(:parsed_config) { YAML.load(ERB.new(services_yml).result)[Xip.env] }
+    let(:config) { Xip.load_services_config!(services_yml) }
 
     it "should return the root node" do
       expect(config.facebook).to eq parsed_config['facebook']
@@ -22,7 +22,7 @@ describe "Stealth::Configuration" do
     end
 
     it "should retain the configuration at the class level" do
-      expect(Stealth.config.facebook.setup.greeting).to eq parsed_config['facebook']['setup']['greeting']
+      expect(Xip.config.facebook.setup.greeting).to eq parsed_config['facebook']['setup']['greeting']
     end
 
     it "should handle multiple keys at the root level" do
@@ -40,7 +40,7 @@ describe "Stealth::Configuration" do
 
   describe "config files with ERB" do
     let(:services_yml) { File.read(File.join(File.dirname(__FILE__), 'support', 'services_with_erb.yml')) }
-    let(:config) { Stealth.load_services_config!(services_yml) }
+    let(:config) { Xip.load_services_config!(services_yml) }
 
     it "should replace available embedded env vars" do
       ENV['FACEBOOK_VERIFY_TOKEN'] = 'it works'
@@ -52,14 +52,14 @@ describe "Stealth::Configuration" do
     end
 
     it "should not reload the configuration file if one already exists" do
-      Stealth.load_services_config(services_yml)
+      Xip.load_services_config(services_yml)
       expect(config.facebook.challenge).to be_nil
     end
   end
 
   describe "configuring with default values" do
     let(:config) {
-      Stealth::Configuration.new(
+      Xip::Configuration.new(
         { 'a' => nil, 'x' => 0, 'y' => false, 'z' => '' }
       )
     }

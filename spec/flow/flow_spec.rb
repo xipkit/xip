@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe Stealth::Flow do
+describe Xip::Flow do
 
   class CustomFlowMap
-    include Stealth::Flow
+    include Xip::Flow
 
     flow :new_todo do
       state :new
@@ -38,7 +38,7 @@ describe Stealth::Flow do
     it "should raise an error if an invalid state is specified" do
       expect {
         flow_map.init(flow: 'new_todo', state: 'invalid')
-      }.to raise_error(Stealth::Errors::InvalidStateTransition)
+      }.to raise_error(Xip::Errors::InvalidStateTransition)
     end
   end
 

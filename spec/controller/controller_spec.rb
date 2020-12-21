@@ -2,9 +2,9 @@
 
 require 'spec_helper'
 
-describe "Stealth::Controller" do
+describe "Xip::Controller" do
 
-  class MrRobotsController < Stealth::Controller
+  class MrRobotsController < Xip::Controller
     def my_action
       [:success, :my_action]
     end
@@ -18,7 +18,7 @@ describe "Stealth::Controller" do
     end
   end
 
-  class MrTronsController < Stealth::Controller
+  class MrTronsController < Xip::Controller
     def other_action
 
     end
@@ -45,7 +45,7 @@ describe "Stealth::Controller" do
   end
 
   class FlowMap
-    include Stealth::Flow
+    include Xip::Flow
 
     flow :mr_robot do
       state :my_action
@@ -128,14 +128,14 @@ describe "Stealth::Controller" do
 
   describe "states with redirect_to specified" do
     it "should step_to the specified redirect state when only a state is specified" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
       expect(MrTronsController).to receive(:new).and_return(controller)
       expect(controller).to receive(:other_action)
       controller.action(action: :deprecated_action)
     end
 
     it "should step_to the specified redirect flow and state when a session is specified" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2')
+      controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action2')
       mr_robot_controller = MrRobotsController.new(service_message: facebook_message.message_with_text)
 
       allow(MrRobotsController).to receive(:new).and_return(mr_robot_controller)
@@ -144,7 +144,7 @@ describe "Stealth::Controller" do
     end
 
     it "should NOT call the redirected controller action method" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
+      controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'mr_tron', state: 'deprecated_action')
       expect(MrTronsController).to receive(:new).and_return(controller)
       expect(controller).to_not receive(:deprecated_action)
       controller.action(action: :deprecated_action)
@@ -261,7 +261,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action3)
 
-      session = Stealth::Session.new(id: controller.current_session_id)
+      session = Xip::Session.new(id: controller.current_session_id)
       session.set_session(new_flow: 'mr_robot', new_state: 'my_action3')
 
       controller.update_session_to session: session
@@ -313,7 +313,7 @@ describe "Stealth::Controller" do
     it "should schedule a transition to flow's first state's controller action when only a flow is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -332,7 +332,7 @@ describe "Stealth::Controller" do
 
       controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -349,7 +349,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a state and flow is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -366,10 +366,10 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      session = Stealth::Session.new(id: controller.current_session_id)
+      session = Xip::Session.new(id: controller.current_session_id)
       session.set_session(new_flow: 'mr_robot', new_state: 'my_action3')
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -386,7 +386,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session slug is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -403,7 +403,7 @@ describe "Stealth::Controller" do
     it "should accept flow and string specified as symbols" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -418,7 +418,7 @@ describe "Stealth::Controller" do
     end
 
     it "should pass along the target_id if set on the message" do
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in).with(
         100.seconds,
         controller.current_service,
         controller.current_session_id,
@@ -461,7 +461,7 @@ describe "Stealth::Controller" do
     it "should schedule a transition to flow's first state's controller action when only a flow is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -480,7 +480,7 @@ describe "Stealth::Controller" do
 
       controller.current_session.set_session(new_flow: 'mr_tron', new_state: 'other_action')
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -497,7 +497,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a state and flow is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -514,10 +514,10 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      session = Stealth::Session.new(id: controller.current_session_id)
+      session = Xip::Session.new(id: controller.current_session_id)
       session.set_session(new_flow: 'mr_robot', new_state: 'my_action3')
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -534,7 +534,7 @@ describe "Stealth::Controller" do
     it "should update session to controller's corresponding action when a session slug is provided" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -551,7 +551,7 @@ describe "Stealth::Controller" do
     it "should accept flow and string specified as symbols" do
       expect_any_instance_of(MrRobotsController).to_not receive(:my_action)
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -566,7 +566,7 @@ describe "Stealth::Controller" do
     end
 
     it "should pass along the target_id if set on the message" do
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at).with(
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at).with(
         future_timestamp,
         controller.current_service,
         controller.current_session_id,
@@ -663,22 +663,22 @@ describe "Stealth::Controller" do
   describe "step_back" do
     let(:back_to_slug) { [controller.current_session_id, 'back_to'].join('-') }
 
-    it "should raise Stealth::Errors::InvalidStateTransition if back_to_session is not set" do
+    it "should raise Xip::Errors::InvalidStateTransition if back_to_session is not set" do
       $redis.del(back_to_slug)
       expect {
         controller.step_back
-      }.to raise_error(Stealth::Errors::InvalidStateTransition)
+      }.to raise_error(Xip::Errors::InvalidStateTransition)
     end
 
     it "should step_to the stored back_to_session" do
       controller.set_back_to(flow: 'marco', state: 'polo')
-      back_to_session = Stealth::Session.new(
+      back_to_session = Xip::Session.new(
         id: controller.current_session_id,
         type: :back_to
       )
 
       # We need to control the returned session object so the IDs match
-      expect(Stealth::Session).to receive(:new).with(
+      expect(Xip::Session).to receive(:new).with(
         id: controller.current_session_id,
         type: :back_to
       ).and_return(back_to_session)
@@ -711,7 +711,7 @@ describe "Stealth::Controller" do
     it "should be falsey if an action only calls step_to_at" do
       expect(controller.progressed?).to be_falsey
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_at)
+      expect(Xip::ScheduledReplyJob).to receive(:perform_at)
       controller.step_to_at (DateTime.now + 10.hours), flow: 'mr_robot'
 
       expect(controller.progressed?).to be_falsey
@@ -720,7 +720,7 @@ describe "Stealth::Controller" do
     it "should be falsey if an action only calls step_to_in" do
       expect(controller.progressed?).to be_falsey
 
-      expect(Stealth::ScheduledReplyJob).to receive(:perform_in)
+      expect(Xip::ScheduledReplyJob).to receive(:perform_in)
       controller.step_to_in 100.seconds, flow: 'mr_robot'
 
       expect(controller.progressed?).to be_falsey
@@ -739,7 +739,7 @@ describe "Stealth::Controller" do
       stubbed_service_reply = double("service_reply")
       allow(controller).to receive(:action_replies).and_return([], :erb)
       allow(stubbed_service_reply).to receive(:replies).and_return([])
-      allow(Stealth::ServiceReply).to receive(:new).and_return(stubbed_service_reply)
+      allow(Xip::ServiceReply).to receive(:new).and_return(stubbed_service_reply)
 
       controller.send_replies
       expect(controller.progressed?).to be_truthy
@@ -779,7 +779,7 @@ describe "Stealth::Controller" do
     end
 
     it "should not call set_session on current_session if the flow and state match" do
-      expect_any_instance_of(Stealth::Session).to_not receive(:set_session)
+      expect_any_instance_of(Xip::Session).to_not receive(:set_session)
       controller.send(:update_session, flow: :mr_tron, state: :other_action)
     end
   end
@@ -789,35 +789,35 @@ describe "Stealth::Controller" do
 
     describe "dev_jump_detected?" do
       it "should return false if the enviornment is not 'development'" do
-        expect(Stealth.env).to eq 'test'
+        expect(Xip.env).to eq 'test'
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       it "should return false if the message does not match the jump format" do
-        allow(Stealth).to receive(:env).and_return(dev_env)
+        allow(Xip).to receive(:env).and_return(dev_env)
         controller.current_message.message = 'hello world'
-        expect(Stealth.env.development?).to be true
+        expect(Xip.env.development?).to be true
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       it "should return false if the message looks like an American date" do
-        allow(Stealth).to receive(:env).and_return(dev_env)
+        allow(Xip).to receive(:env).and_return(dev_env)
         controller.current_message.message = '1/23/84'
-        expect(Stealth.env.development?).to be true
+        expect(Xip.env.development?).to be true
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       it "should return false if the message looks like an American date that is zero padded" do
-        allow(Stealth).to receive(:env).and_return(dev_env)
+        allow(Xip).to receive(:env).and_return(dev_env)
         controller.current_message.message = '01/23/1984'
-        expect(Stealth.env.development?).to be true
+        expect(Xip.env.development?).to be true
         expect(controller.send(:dev_jump_detected?)).to be false
       end
 
       describe "with a dev jump message" do
         before(:each) do
           expect(controller).to receive(:handle_dev_jump).and_return(true)
-          expect(Stealth).to receive(:env).and_return(dev_env)
+          expect(Xip).to receive(:env).and_return(dev_env)
         end
 
         it "should return true if the message is in the format /flow/state" do

@@ -5,7 +5,7 @@ class SampleMessage
 
   def initialize(service:)
     @service = service
-    @base_message = Stealth::ServiceMessage.new(service: @service)
+    @base_message = Xip::ServiceMessage.new(service: @service)
     @base_message.sender_id = sender_id
     @base_message.timestamp = timestamp
     @base_message

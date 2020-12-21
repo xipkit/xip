@@ -1,7 +1,7 @@
-module Stealth
+module Xip
   module Nlp
     module Dialogflow
-      class Client < Stealth::Nlp::Client
+      class Client < Xip::Nlp::Client
 
       end
     end

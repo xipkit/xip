@@ -2,10 +2,10 @@
 
 require 'spec_helper'
 
-describe "Stealth::Controller::CatchAll" do
+describe "Xip::Controller::CatchAll" do
   $msg = nil
 
-  class StubbedCatchAllsController < Stealth::Controller
+  class StubbedCatchAllsController < Xip::Controller
     def level1
       $msg = current_message
       do_nothing
@@ -21,7 +21,7 @@ describe "Stealth::Controller::CatchAll" do
   end
 
   class FlowMap
-    include Stealth::Flow
+    include Xip::Flow
 
     flow :vader do
       state :my_action
@@ -51,13 +51,13 @@ describe "Stealth::Controller::CatchAll" do
     end
 
     it "should step_to catch_all->level1 when a StandardError is raised" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action')
+      controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'vader', state: 'my_action')
       controller.action(action: :my_action)
       expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level1')
     end
 
     it "should step_to catch_all->level1 when an action doesn't progress the flow" do
-      controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'vader', state: 'my_action2')
+      controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'vader', state: 'my_action2')
       controller.action(action: :my_action2)
       expect($redis.get(controller.current_session.session_key)).to eq('catch_all->level1')
     end
@@ -95,14 +95,14 @@ describe "Stealth::Controller::CatchAll" do
         e.class = RuntimeError
         e.message = 'oops'
         e.backtrace = [
-          '/stealth/lib/stealth/controller/controller.rb',
-          '/stealth/lib/stealth/controller/catch_all.rb',
+          '/xip/lib/xip/controller/controller.rb',
+          '/xip/lib/xip/controller/catch_all.rb',
         ]
         e
       }
 
       before(:each) do
-        controller.current_session.session = Stealth::Session.canonical_session_slug(flow: 'catch_all', state: 'level1')
+        controller.current_session.session = Xip::Session.canonical_session_slug(flow: 'catch_all', state: 'level1')
       end
 
       it "should not step_to to catch_all" do
@@ -115,15 +115,15 @@ describe "Stealth::Controller::CatchAll" do
       end
 
       it "should log the error message" do
-        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} OpenStruct\noops\n/stealth/lib/stealth/controller/controller.rb\n/stealth/lib/stealth/controller/catch_all.rb")
-        expect(Stealth::Logger).to receive(:l).with(topic: 'catch_all', message: "CatchAll triggered for user #{facebook_message.sender_id} from within CatchAll; ignoring.")
+        expect(Xip::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} OpenStruct\noops\n/xip/lib/xip/controller/controller.rb\n/xip/lib/xip/controller/catch_all.rb")
+        expect(Xip::Logger).to receive(:l).with(topic: 'catch_all', message: "CatchAll triggered for user #{facebook_message.sender_id} from within CatchAll; ignoring.")
         controller.run_catch_all(err: e)
       end
     end
 
     describe "catch_all_reason" do
       before(:each) do
-        @session = Stealth::Session.new(id: controller.current_session_id)
+        @session = Xip::Session.new(id: controller.current_session_id)
         @session.set_session(new_flow: 'vader', new_state: 'my_action2')
       end
 
@@ -140,13 +140,13 @@ describe "Stealth::Controller::CatchAll" do
 
       it 'should have the correct error when handle_message fails to recognize a message' do
         controller.action(action: :action_with_unrecognized_msg)
-        expect($msg.catch_all_reason[:err]).to eq(Stealth::Errors::UnrecognizedMessage)
+        expect($msg.catch_all_reason[:err]).to eq(Xip::Errors::UnrecognizedMessage)
         expect($msg.catch_all_reason[:err_msg]).to eq("The reply '#{facebook_message.message_with_text.message}' was not recognized.")
       end
 
       it 'should have the correct error when get_match fails to recognize a message' do
         controller.action(action: :action_with_unrecognized_match)
-        expect($msg.catch_all_reason[:err]).to eq(Stealth::Errors::UnrecognizedMessage)
+        expect($msg.catch_all_reason[:err]).to eq(Xip::Errors::UnrecognizedMessage)
         expect($msg.catch_all_reason[:err_msg]).to eq("The reply '#{facebook_message.message_with_text.message}' was not recognized.")
       end
     end
