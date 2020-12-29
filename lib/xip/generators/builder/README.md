@@ -6,4 +6,4 @@ To boot this bot locally, we recommend the following:
 2. Start your local Redis server
 3. `xip s`
 
-For more information, please check out the [Xip documentation](https://xipkit.com/docs).
+For more information, please check out the [Xip documentation](https://docs.xipkit.com).
