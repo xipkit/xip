@@ -14,8 +14,6 @@ jobs:
       matrix:
         ruby: [ 2.5, 2.6, 2.7, 3.0, jruby-9.1.17.0, jruby-9.2.13.0, truffleruby-head ]
     name: ${{ matrix.ruby }}
-    env:
-      BUNDLE_GEMFILE: .ci.gemfile
     steps:
     - uses: actions/checkout@v2
       if: startsWith(matrix.ruby, 'truffleruby')
