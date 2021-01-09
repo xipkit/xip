@@ -3,6 +3,7 @@
 require 'thor'
 require 'xip/cli_base'
 require 'xip/commands/console'
+require 'xip/commands/listen'
 require 'xip/generators/builder'
 require 'xip/generators/generate'
 
@@ -89,6 +90,22 @@ module Xip
       end
     end
     map 'c' => 'console'
+
+
+    desc 'console', 'Starts a xip tunnel'
+    long_desc <<-EOS
+    `xip listen` starts the xip tunnel.
+
+    $ > xip listen
+    EOS
+    def listen
+      if options[:help]
+        invoke :help, ['listen']
+      else
+        Xip::Commands::Listen.new(options).start
+      end
+    end
+    map 'l' => 'listen'
 
 
     desc 'setup', 'Runs setup tasks for a specified service'
