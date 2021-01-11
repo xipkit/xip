@@ -12,7 +12,7 @@ module Xip
     #   `bundle exec xip listen`
     class Listen < Command
 
-      LISTEN_URI = 'wss://ws-mt1.pusher.com/app/892bee062bc081dc397c'
+      LISTEN_URI = 'ws://0.0.0.0:3000/listen'
 
       attr_reader :options
 
@@ -27,11 +27,22 @@ module Xip
 
           ws = WebSocket::EventMachine::Client.connect(uri: LISTEN_URI)
 
+          Signal.trap('INT') {
+            ws.close
+            exit
+          }
+
+          Signal.trap('TERM') {
+            ws.close
+            exit
+          }
+
           ws.onopen do
             puts "Connected"
           end
 
           ws.onping do
+            puts "Got ping."
             ws.pong
           end
 
@@ -40,7 +51,8 @@ module Xip
           end
 
           ws.onclose do |code, reason|
-            puts "Disconnected with status code: #{code}"
+            puts "Disconnected."
+            exit
           end
 
         end
