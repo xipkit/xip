@@ -12,19 +12,39 @@ module Xip
     #   `bundle exec xip listen`
     class Listen < Command
 
-      LISTEN_URI = 'ws://0.0.0.0:3000/listen'
-
       attr_reader :options
 
       def initialize(options)
         super(options)
 
         @options = options
+        @xiprc = parse_auth_file
+        @port = @options['port']
+        @host = @options['host']
+        CLI::UI::StdoutRouter.enable
+
+        # TODO: Handle scenario where a host is specified via -h
+
+        if @xiprc.size == 0
+          @host = @key = nil
+          puts CLI::UI.fmt("{{yellow:No hosts registered. Generating a temporary host.}}")
+          puts CLI::UI.fmt("{{yellow:You can register a permanent host with {{command:`xip register`}}")
+        elsif @xiprc.size == 1
+          # Only a single host has been registered, load it
+          @host = @xiprc.first['host']
+          @key = @xiprc.first['key']
+        elsif @xiprc.size > 1
+          @host = @xiprc.first['host']
+          @key = @xiprc.first['key']
+          puts CLI::UI.fmt("{{yellow:Multiple hosts registered. Defaulting to `#{@host}`}}")
+          puts CLI::UI.fmt("{{yellow:You can specify a host with {{command:-h}}")
+        end
+
+        puts ""
       end
 
       def start
         EM.run do
-
           ws = WebSocket::EventMachine::Client.connect(uri: LISTEN_URI)
 
           Signal.trap('INT') {
