@@ -92,7 +92,7 @@ module Xip
     map 'c' => 'console'
 
 
-    desc 'console', 'Starts a xip tunnel'
+    desc 'listen', 'Starts a xip tunnel'
     long_desc <<-EOS
     `xip listen` starts the xip tunnel.
 
