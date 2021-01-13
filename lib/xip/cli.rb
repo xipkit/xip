@@ -61,14 +61,14 @@ module Xip
 
     $ > xip server -p 4500
     EOS
-    method_option :port, aliases: '-p', desc: 'The port to run the server on'
-    method_option :help, desc: 'Displays the usage message'
+    method_option :port, aliases: '-p', desc: 'The port to run the server.', default: '5000'
+    method_option :help, desc: 'Displays this message.'
     def server
       if options[:help]
         invoke :help, ['server']
       else
         require 'xip/commands/server'
-        Xip::Commands::Server.new(port: options.fetch(:port) { 5000 }).start
+        Xip::Commands::Server.new(port: options.fetch(:port) { options[:port] }).start
       end
     end
     map 's' => 'server'
@@ -81,7 +81,7 @@ module Xip
     $ > xip console --engine=pry
     EOS
     method_option :engine, desc: "Choose a specific console engine: (#{Xip::Commands::Console::ENGINES.keys.join('/')})"
-    method_option :help, desc: 'Displays the usage method'
+    method_option :help, desc: 'Displays this message.'
     def console
       if options[:help]
         invoke :help, ['console']
@@ -98,6 +98,7 @@ module Xip
 
     $ > xip listen
     EOS
+    method_option :help, desc: 'Displays this message.'
     def listen
       if options[:help]
         invoke :help, ['listen']
