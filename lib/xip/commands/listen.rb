@@ -2,6 +2,9 @@
 
 require 'xip/commands/command'
 require 'websocket-eventmachine-client'
+require 'yaml'
+require 'openssl'
+require 'cli/ui'
 
 module Xip
   module Commands
@@ -58,24 +61,43 @@ module Xip
           }
 
           ws.onopen do
-            puts "Connected"
-          end
-
-          ws.onping do
-            puts "Got ping."
-            ws.pong
+            CLI::UI::Frame.open("{{v}} {{bold:https://host.xip.dev → http://0.0.0.0:#{@port}}}", color: :green) do
+              puts CLI::UI.fmt("{{green:Connected}}")
+            end
           end
 
           ws.onmessage do |msg, type|
             puts "Received message: #{msg}"
+            webhook = MultiJson.load(msg)
+            puts CLI::UI.fmt("{{*}} {{blue:#{DateTime.now.iso8601}}}: {{cyan:POST 0.0.0.0:#{@port}}}")
           end
 
           ws.onclose do |code, reason|
-            puts "Disconnected."
+            puts ""
+            puts CLI::UI.fmt("{{magenta:Could not reach xip-listen server. Disconnecting.}}")
             exit
           end
-
         end
+      end
+
+      private def parse_auth_file
+        begin
+          file_contents = File.read(XIPRC)
+          YAML.load(file_contents)
+        rescue Errno::ENOENT
+          [] # .xiprc does not yet exist
+        end
+      end
+
+      private def signature
+        if @host.present? && @key.present?
+          OpenSSL::HMAC.hexdigest("SHA256", @key, @host)
+        end
+      end
+
+      private def auth_message
+        auth = [@host, siganture].join(':')
+        "AUTH #{auth}"
       end
 
     end

@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sidekiq', '~> 6.0'
   s.add_dependency 'activesupport', '~> 6.0'
   s.add_dependency 'websocket-eventmachine-client', '~> 1.3'
+  s.add_dependency 'cli-ui', '~> 1.4'
 
   s.add_development_dependency 'rspec', '~> 3.9'
   s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'
