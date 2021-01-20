@@ -17,9 +17,9 @@ Rest assured, though, that all feature deprecations will be either "gently" remo
 
 ## Currently Maintained Versions
 
-:white_check_mark: - These versions will receive feature updates, bugfixes, and security updates.
-:heavy_check_mark: - These versions will only receive bugfixes and security updates.
-:x: - These versions are no longer maintained. Please upgrade.
+* :white_check_mark: - These versions will receive feature updates, bugfixes, and security updates.
+* :heavy_check_mark: - These versions will only receive bugfixes and security updates.
+* :x: - These versions are no longer maintained. Please upgrade.
 
 | Version | Supported          |
 | ------- | ------------------ |
