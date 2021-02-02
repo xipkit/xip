@@ -99,7 +99,7 @@ module Xip
 
     $ > xip listen
     EOS
-    method_option :port, aliases: '-p', desc: 'The port Xip is running on.', default: '5000'
+    method_option :port, aliases: '-p', desc: 'The port Xip is currently running on.', default: '5000'
     method_option :host, aliases: '-h', desc: 'Host to use (if you have registered more than one)'
     method_option :help, desc: 'Displays this message.'
     def listen
