@@ -72,6 +72,7 @@ module Xip
       end
     end
     map 's' => 'server'
+    map 'start' => 'server'
 
 
     desc 'console', 'Starts a xip console'
