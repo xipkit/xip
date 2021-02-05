@@ -4,6 +4,7 @@ require 'thor'
 require 'xip/cli_base'
 require 'xip/commands/console'
 require 'xip/commands/listen'
+require 'xip/commands/register'
 require 'xip/generators/builder'
 require 'xip/generators/generate'
 
@@ -114,6 +115,24 @@ module Xip
       end
     end
     map 'l' => 'listen'
+
+
+    desc 'register', 'Register a custom hostname from xipkit.com'
+    long_desc <<-EOS
+    `xip register` registers a custom xip.dev hostname obtained from xipkit.com
+
+    $ > xip register
+    EOS
+    method_option :host, aliases: '-h', desc: 'Hostname you are registering.', required: true
+    method_option :key, aliases: '-k', desc: 'Key for the hostname you are registering.', required: true
+    method_option :help, desc: 'Displays this message.'
+    def register
+      if options[:help]
+        invoke :help, ['register']
+      else
+        Xip::Commands::Register.new(options).start
+      end
+    end
 
 
     desc 'setup', 'Runs setup tasks for a specified service'
