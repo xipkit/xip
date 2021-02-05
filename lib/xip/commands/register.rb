@@ -24,7 +24,7 @@ module Xip
 
       def start
         if host_already_registered?
-          cmd_puts("{{x}} {{red:The hostname}} {{command:#{@host}}} {{red:is already registered. Try}} {{command:xip deregister --help}}")
+          cmd_puts("{{x}} {{red:The hostname}} {{command:#{@host}}} {{red:is already registered. Try}} {{command:xip remove --help}}")
           exit(1)
         end
 
