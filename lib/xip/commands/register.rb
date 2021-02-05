@@ -17,7 +17,6 @@ module Xip
       def initialize(options)
         super(options)
 
-        @port   = options['port']
         @host   = options['host']
         @key    = options['key']
         @xiprc  = load_xiprc
