@@ -5,6 +5,7 @@ require 'xip/cli_base'
 require 'xip/commands/console'
 require 'xip/commands/listen'
 require 'xip/commands/register'
+require 'xip/commands/remove'
 require 'xip/generators/builder'
 require 'xip/generators/generate'
 
@@ -133,6 +134,25 @@ module Xip
         Xip::Commands::Register.new(options).start
       end
     end
+
+
+
+    desc 'remove', 'Removes a custom hostname from your local config. Still requires deletion from xipkit.com!'
+    long_desc <<-EOS
+    `xip remove` removes a custom xip.dev hostname from your local config. Does NOT delete domain from xipkit.com!
+
+    $ > xip remove
+    EOS
+    method_option :host, aliases: '-h', desc: 'Hostname you are removing.', required: true
+    method_option :help, desc: 'Displays this message.'
+    def remove
+      if options[:help]
+        invoke :help, ['remove']
+      else
+        Xip::Commands::Remove.new(options).start
+      end
+    end
+
 
 
     desc 'setup', 'Runs setup tasks for a specified service'
