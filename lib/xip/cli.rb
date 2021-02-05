@@ -11,6 +11,10 @@ module Xip
   class Cli < Thor
     extend CliBase
 
+    def self.exit_on_failure?
+      true
+    end
+
     desc 'new', 'Creates a new Xip bot'
     long_desc <<-EOS
     `xip new <name>` creates a new Xip both with the given name.
