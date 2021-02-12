@@ -20,6 +20,8 @@ module Xip
       SUCCESS_CMD  = "SUCCESS"
       ERR_CMD      = "ERR"
 
+      @@user_disconnect = false
+
       attr_reader :options, :host, :port, :key
 
       def initialize(options)
@@ -51,11 +53,13 @@ module Xip
           ws = WebSocket::EventMachine::Client.connect(uri: LISTEN_URI)
 
           Signal.trap('INT') {
+            @@user_disconnect = true
             ws.close
             exit(0)
           }
 
           Signal.trap('TERM') {
+            @@user_disconnect = true
             ws.close
             exit(0)
           }
@@ -106,7 +110,12 @@ module Xip
           end
 
           ws.onclose do |code, reason|
-            cmd_puts("{{magenta:Could not reach Xip server. Disconnecting.}}")
+            cmd_puts("")
+            if @@user_disconnect
+              cmd_puts("{{magenta:Disconnected. 👋}}")
+            else
+              cmd_puts("{{magenta:Could not reach Xip server. Disconnecting.}}")
+            end
             exit(0)
           end
         end
