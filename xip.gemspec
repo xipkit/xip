@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.12'
   s.add_dependency 'sidekiq', '~> 6.0'
   s.add_dependency 'activesupport', '~> 6.0'
+  s.add_dependency 'http', '~> 4.4'
   s.add_dependency 'websocket-eventmachine-client', '~> 1.3'
   s.add_dependency 'cli-ui', '~> 1.4'
 
