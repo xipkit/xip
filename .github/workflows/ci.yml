@@ -30,12 +30,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - uses: actions/cache@v1
-        with:
-          path: vendor/bundle
-          key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-gems-
+
+      - name: Update RubyGems
+        if: startsWith(matrix.ruby, 'jruby')
+        run: gem update --system
 
       - name: Run specs (Windows)
         if: startsWith(matrix.os, 'windows')
