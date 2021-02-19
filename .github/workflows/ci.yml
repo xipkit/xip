@@ -32,5 +32,10 @@ jobs:
           bundler-cache: true
 
       - name: Run specs
-        run: bin/rspec rspec --format progress --force-colour
+        if: startsWith(matrix.os, 'windows')
+        run: bin/rspec rspec
+
+      - name: Run specs
+        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
+        run: bundle exec rspec
         continue-on-error: ${{ startsWith(matrix.ruby, 'truffleruby') }}
