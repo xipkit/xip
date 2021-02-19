@@ -33,7 +33,7 @@ jobs:
 
       - name: Update RubyGems
         if: startsWith(matrix.ruby, 'jruby')
-        run: 
+        run: |
           gem update --system
           bundle install --jobs 4 --retry 3
 
