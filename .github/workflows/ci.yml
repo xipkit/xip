@@ -33,8 +33,9 @@ jobs:
 
       - name: Update RubyGems
         if: startsWith(matrix.ruby, 'jruby')
-        run: gem update --system
-        run: bundle install --jobs 4 --retry 3
+        run: 
+          gem update --system
+          bundle install --jobs 4 --retry 3
 
       - name: Run specs (Windows)
         if: startsWith(matrix.os, 'windows')
