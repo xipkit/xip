@@ -20,6 +20,7 @@ jobs:
 
     env:
       BUNDLE_GEMFILE: Gemfile
+      XIP_ENV: test
 
     steps:
       - uses: actions/checkout@v2
@@ -30,6 +31,4 @@ jobs:
 
       - name: Run specs
         run: bundle exec rspec --format progress --force-colour
-        env:
-          XIP_ENV: test
         continue-on-error: ${{ startsWith(matrix.ruby, 'truffleruby') }}
