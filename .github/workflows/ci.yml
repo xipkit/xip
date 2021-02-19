@@ -13,6 +13,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         ruby: [ 2.7, 3.0, jruby-9.2.14.0, truffleruby-head ]
+        exclude:
+          - { os: windows-latest , ruby: truffleruby-head }
 
     runs-on: ${{ matrix.os }}
 
