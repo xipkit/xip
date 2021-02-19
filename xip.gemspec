@@ -19,8 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'sidekiq', '~> 6.0'
   s.add_dependency 'activesupport', '~> 6.0'
 
-  s.add_development_dependency 'rspec', '~> 3.9'
-  s.add_development_dependency 'rspec_junit_formatter', '~> 0.3'
+  s.add_development_dependency 'rspec', '~> 3.10'
   s.add_development_dependency 'rack-test', '~> 1.1'
   s.add_development_dependency 'mock_redis', '~> 0.22'
 
