@@ -31,9 +31,9 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Run specs
+      - name: Run specs (Windows)
         if: startsWith(matrix.os, 'windows')
-        run: bin/rspec rspec
+        run: bin/rspec
 
       - name: Run specs
         if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
