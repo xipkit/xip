@@ -13,10 +13,8 @@ jobs:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04, macos-10.15, windows-2019]
         ruby: [ 2.7, 3.0, truffleruby-head ]
-        include:
-          - { os: windows-2019 , ruby: mingw }
         exclude:
-          - { os: windows-latest , ruby: truffleruby-head }
+          - { os: windows-2019 , ruby: truffleruby-head }
 
     runs-on: ${{ matrix.os }}
 
@@ -33,7 +31,17 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
+      - name: Run specs (Windows)
+        if: startsWith(matrix.os, 'windows')
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          gem install bundler --no-document
+          bundle install --jobs 4 --retry 3
+          bundle exec rspec
+
       - name: Run specs
+        if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
         timeout-minutes: 10
         run: bundle exec rspec
         continue-on-error: ${{ startsWith(matrix.ruby, 'truffleruby') }}
