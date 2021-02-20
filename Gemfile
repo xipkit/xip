@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 gemspec
 
 platforms :mri do
-  gem 'oj', '~> 3.10'
+  gem 'oj', '~> 3.11'
 end
 
 group :test do
