@@ -38,7 +38,7 @@ jobs:
         run: |
           gem install bundler --no-document
           bundle install --jobs 4 --retry 3
-          ./bin/rspec
+          bundle exec rspec
 
       - name: Run specs
         if: startsWith(matrix.os, 'macos') || startsWith(matrix.os, 'ubuntu')
