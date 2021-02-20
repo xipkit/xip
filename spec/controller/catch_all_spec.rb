@@ -91,13 +91,13 @@ describe "Xip::Controller::CatchAll" do
 
     describe "catch_alls from within catch_all flow" do
       let(:e) {
-        e = OpenStruct.new
-        e.class = RuntimeError
-        e.message = 'oops'
-        e.backtrace = [
-          '/xip/lib/xip/controller/controller.rb',
-          '/xip/lib/xip/controller/catch_all.rb',
-        ]
+        e = RuntimeError.new('oops')
+        allow(e).to receive(:backtrace).and_return(
+          [
+            '/xip/lib/xip/controller/controller.rb',
+            '/xip/lib/xip/controller/catch_all.rb',
+          ]
+        )
         e
       }
 
@@ -115,7 +115,7 @@ describe "Xip::Controller::CatchAll" do
       end
 
       it "should log the error message" do
-        expect(Xip::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} OpenStruct\noops\n/xip/lib/xip/controller/controller.rb\n/xip/lib/xip/controller/catch_all.rb")
+        expect(Xip::Logger).to receive(:l).with(topic: 'catch_all', message: "[Level 1] for user #{facebook_message.sender_id} RuntimeError\noops\n/xip/lib/xip/controller/controller.rb\n/xip/lib/xip/controller/catch_all.rb")
         expect(Xip::Logger).to receive(:l).with(topic: 'catch_all', message: "CatchAll triggered for user #{facebook_message.sender_id} from within CatchAll; ignoring.")
         controller.run_catch_all(err: e)
       end
