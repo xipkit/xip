@@ -27,7 +27,7 @@ describe "Xip::Session" do
       Xip::Session.new(id: id)
     }.to raise_error(Xip::Errors::RedisNotConfigured)
 
-    $redis = MockRedis.new
+    $redis = Redis.new
   end
 
   describe "without a session" do

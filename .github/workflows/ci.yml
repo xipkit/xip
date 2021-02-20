@@ -11,7 +11,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, macos-10.15]
+        os: [ubuntu-18.04, ubuntu-20.04]
         ruby: [ 2.7, 3.0, truffleruby-head ]
 
     runs-on: ${{ matrix.os }}
@@ -21,6 +21,20 @@ jobs:
     env:
       BUNDLE_GEMFILE: Gemfile
       XIP_ENV: test
+
+    services:
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
